@@ -1246,22 +1246,37 @@ export default function HomePage() {
                           <div className={viewMode === 'card' ? 'glass card' : 'table-row'} style={viewMode === 'list' ? { gridTemplateColumns: '2fr 1fr 1.2fr 1.2fr 1.5fr 60px' } : {}}>
                             {viewMode === 'list' ? (
                               <>
-                                <div className="table-cell name-cell">
-                                  <button
-                                    className={`icon-button fav-button ${favorites.has(f.code) ? 'active' : ''}`}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      toggleFavorite(f.code);
-                                    }}
-                                    title={favorites.has(f.code) ? "取消自选" : "添加自选"}
-                                  >
-                                    <StarIcon width="18" height="18" filled={favorites.has(f.code)} />
-                                  </button>
-                                  <div className="title-text">
-                                    <span className="name-text">{f.name}</span>
-                                    <span className="muted code-text">#{f.code}</span>
-                                  </div>
-                                </div>
+                                <div className="table-cell name-cell" style={{ minWidth: 0 }}> {/* minWidth:0 确保在flex/grid中能正确压缩 */}
+  <button
+    className={`icon-button fav-button ${favorites.has(f.code) ? 'active' : ''}`}
+    onClick={(e) => {
+      e.stopPropagation();
+      toggleFavorite(f.code);
+    }}
+    title={favorites.has(f.code) ? "取消自选" : "添加自选"}
+  >
+    <StarIcon width="18" height="18" filled={favorites.has(f.code)} />
+  </button>
+  
+  <div className="title-text" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+    <span 
+      className="name-text" 
+      title={f.name} // 鼠标悬停显示全名
+      style={{
+        fontWeight: 600,
+        whiteSpace: 'nowrap',      // 1. 禁止换行
+        overflow: 'hidden',        // 2. 超出隐藏
+        textOverflow: 'ellipsis',  // 3. 超出显示省略号
+        // 4. 动态字号逻辑：字数>18用12px，>12用13px，否则默认
+        fontSize: f.name.length > 18 ? '12px' : f.name.length > 12 ? '13px' : '15px',
+        lineHeight: '1.5'
+      }}
+    >
+      {f.name}
+    </span>
+    <span className="muted code-text" style={{ fontSize: '12px' }}>#{f.code}</span>
+  </div>
+</div>
                                 <div className="table-cell text-right value-cell">
                                   <span style={{ fontWeight: 700 }}>{f.estPricedCoverage > 0.05 ? f.estGsz.toFixed(4) : (f.gsz ?? '—')}</span>
                                 </div>
@@ -1431,17 +1446,6 @@ export default function HomePage() {
         <p>注：估算数据与真实结算数据会有1%左右误差</p>
         <div style={{ marginTop: 12, opacity: 0.8 }}>
           <p>
-            遇到任何问题或需求建议可
-            <button
-              className="link-button"
-              onClick={() => {
-                setFeedbackNonce((n) => n + 1);
-                setFeedbackOpen(true);
-              }}
-              style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: '0 4px', textDecoration: 'underline', fontSize: 'inherit', fontWeight: 600 }}
-            >
-              点此提交反馈
-            </button>
           </p>
         </div>
       </div>
